@@ -6,7 +6,7 @@ FIIT STU
 - Zmeny nazvov tabuliek do pluralu a zjednotenie štýlu
 - Vymazanie `Ended_exhibitions`
 - Pridanie novych ENUM typov 
-  - `status` pozuity v `artefacts`
+  - `status` pouzity v `artefacts`
   - `ownership` pouzity v `artefacts`
   - `institute_types` pouzity v `institutes`
 - v tabulke `artefacts`, zmena `condition` -> `state`
