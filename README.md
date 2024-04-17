@@ -19,8 +19,7 @@ FIIT STU
 # Qs
 - je treba spojit historiu artefactu s category? (dalsi M:N)
 - check toho ci mozeme premiestnit artefakt zalezi aj nejako na exhibiciach?
-- 
 - Na Prevziate exemplaru z inej institucie bude stacit ako keby pridat arrival time a zmenit state artefaktu?
-- 
 
-**DOTO** check zone_id ci je v spravnom exhibite
+
+**TODO** check zone_id ci je v spravnom exhibite
