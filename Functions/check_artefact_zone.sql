@@ -8,6 +8,13 @@ DECLARE
     v_exhibition_id UUID;
     v_exhibition_zones_id UUID[];
 BEGIN
+    -- check if the artefact exists
+    IF NOT EXISTS (SELECT 1 FROM artefacts WHERE id = p_artefact_id) THEN
+        RAISE EXCEPTION 'Artefact does not exist';
+    END IF;
+
+    CALL update_current_exhibition(p_artefact_id);
+
     -- get the zone of the artefact
     SELECT zone_id INTO v_zone_id
     FROM artefacts
