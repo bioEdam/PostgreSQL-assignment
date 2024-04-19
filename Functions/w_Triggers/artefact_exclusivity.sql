@@ -1,5 +1,5 @@
 -- Function to check for overlapping exhibitions using the OVERLAPS operator
-CREATE OR REPLACE FUNCTION check_artefact_exhibition_overlap()
+CREATE OR REPLACE FUNCTION artefact_exclusivity()
 RETURNS TRIGGER AS $$
 DECLARE
     -- Variables to store the start and end dates of the new exhibition
@@ -27,7 +27,7 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- Triggers to call the function before inserting or editing a new record
-CREATE OR REPLACE TRIGGER trg_check_artefact_exhibition_overlap
+CREATE OR REPLACE TRIGGER trg_artefact_exclusivity
 BEFORE INSERT OR UPDATE ON artefact_exhibition
 FOR EACH ROW
-EXECUTE FUNCTION check_artefact_exhibition_overlap();
+EXECUTE FUNCTION artefact_exclusivity();

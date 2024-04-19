@@ -17,10 +17,14 @@ FIIT STU
 - v `institutes` rozdelenie `address` na viacero stlpcov
 
 # Qs
-- je treba spojit historiu artefactu s category? (dalsi M:N)
 - check toho ci mozeme premiestnit artefakt zalezi aj nejako na exhibiciach?
 - ako udrzovat zone_id a exhibit_id v artefacte?
 - Na Prevziate exemplaru z inej institucie bude stacit ako keby pridat arrival time a zmenit state artefaktu?
 
 
 **TODO** check zone_id ci je v spravnom exhibite
+**TODO** Dopisat constrains
+
+## Constraints
+- `artefacts`
+  - Je mozne aby artefact bol zapisany v zone zatial co je v exhibicii ktora sa v danej zone nedeje

@@ -1,5 +1,5 @@
 -- check for zones "fullness" before changing zone_id in artefacts
-CREATE OR REPLACE FUNCTION check_capacity()
+CREATE OR REPLACE FUNCTION check_zone_capacity()
 RETURNS TRIGGER AS $$
 DECLARE
     v_capacity integer;
@@ -14,7 +14,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE TRIGGER check_capacity
+CREATE OR REPLACE TRIGGER trg_check_zone_capacity
 BEFORE INSERT OR UPDATE OF zone_id ON artefacts
 FOR EACH ROW
-EXECUTE FUNCTION check_capacity();
+EXECUTE FUNCTION check_zone_capacity();

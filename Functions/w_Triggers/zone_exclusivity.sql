@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION check_zone_exhibition_overlap()
+CREATE OR REPLACE FUNCTION zone_exclusivity()
 RETURNS TRIGGER AS $$
 DECLARE
     -- Variables to store the start and end dates of the new exhibition
@@ -22,7 +22,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE TRIGGER check_zone_exhibition_overlap
+CREATE OR REPLACE TRIGGER trg_zone_exhibition_overlap
 BEFORE INSERT OR UPDATE ON exhibition_zone
 FOR EACH ROW
-EXECUTE FUNCTION check_zone_exhibition_overlap();
+EXECUTE FUNCTION zone_exclusivity();
