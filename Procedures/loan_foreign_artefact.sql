@@ -38,15 +38,22 @@ DECLARE
     v_artefact_id UUID;
     v_loan_id UUID;
 BEGIN
+    -- check if the artefact name is already exists
+    SELECT id INTO v_artefact_id
+    FROM artefacts
+    WHERE name = p_artefact_name;
+
     -- check if institute exists
     IF NOT EXISTS (SELECT 1 FROM institutes WHERE id = p_institute_id) THEN
         RAISE EXCEPTION 'Institute with id % does not exist', p_institute_id;
     END IF;
 
     -- create a new artefact
-    INSERT INTO artefacts (name, description, ownership, state)
-    VALUES (p_artefact_name, p_artefact_description, 'loaned', 'in_transit')
-    RETURNING id INTO v_artefact_id;
+    IF v_artefact_id IS NULL THEN
+        INSERT INTO artefacts (name, description, ownership, state)
+        VALUES (p_artefact_name, p_artefact_description, 'loaned', 'in_transit')
+        RETURNING id INTO v_artefact_id;
+    END IF;
 
     -- create a new loan
     INSERT INTO loans (artefact_id, institute_id, loan_type, expected_arrival_date, start_date, end_date)

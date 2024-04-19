@@ -23,3 +23,4 @@ BEGIN
     WHERE id = p_exemplar_id;
 END;
 $$ LANGUAGE plpgsql;
+-- I feel like this should have been a procedure

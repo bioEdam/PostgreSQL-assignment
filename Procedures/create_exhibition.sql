@@ -12,23 +12,6 @@ DECLARE
     p_artefact_id UUID;
     p_zone_id UUID;
 BEGIN
-     -- check if the artefacts and zones exist
-    IF NOT EXISTS (
-        SELECT 1
-        FROM artefacts
-        WHERE id = ANY(p_artefacts)
-    ) THEN
-        RAISE EXCEPTION 'Artefact does not exist';
-    END IF;
-
-    IF NOT EXISTS (
-        SELECT 1
-        FROM zones
-        WHERE id = ANY(p_zones)
-    ) THEN
-        RAISE EXCEPTION 'Zone does not exist';
-    END IF;
-
     -- Check if all loaned artefacts are available for the exhibition
     FOREACH p_artefact_id IN ARRAY p_artefacts
     LOOP
@@ -45,7 +28,7 @@ BEGIN
             FROM newest_loan
             JOIN artefacts ON artefacts.id = p_artefact_id
             WHERE artefacts.ownership = 'loaned'
-            AND (newest_loan.expected_arrival_date > p_start_date
+            AND (COALESCE(newest_loan.arrival_date, newest_loan.expected_arrival_date) > p_start_date   -- use of expected_arrival_date if the artefact have not arrived yet
             OR newest_loan.end_date < p_end_date)
 
         ) THEN

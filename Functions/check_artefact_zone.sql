@@ -1,7 +1,7 @@
 -- check if the artefact is at the correct zone if it is part of an exhibition
 -- if it is not part of an exhibition, then it cannot be at a zone that is part of an exhibition
 
-CREATE OR REPLACE FUNCTION check_zone(p_artefact_id UUID)
+CREATE OR REPLACE FUNCTION check_artefact_zone(p_artefact_id UUID)
 RETURNS BOOLEAN AS $$
 DECLARE
     v_zone_id UUID;
@@ -37,7 +37,14 @@ BEGIN
             RETURN FALSE;
         END IF;
     ELSE
-        RETURN TRUE;
+        -- if the artefact is not part of an exhibition, then it cannot be at a zone that is part of an exhibition
+        IF EXISTS (SELECT 1
+                   FROM exhibition_zone
+                   WHERE zone_id = v_zone_id) THEN
+            RETURN FALSE;
+        ELSE
+            RETURN TRUE;
+        END IF;
     END IF;
 END;
 $$ LANGUAGE plpgsql;

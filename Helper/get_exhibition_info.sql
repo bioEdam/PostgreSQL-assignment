@@ -5,7 +5,6 @@ SELECT
     e.description,
     e.start_date,
     e.end_date,
-    e.description,
     ARRAY_AGG(DISTINCT artefacts.name) AS artefacts,
     ARRAY_AGG(DISTINCT zones.name) AS zones
 FROM
