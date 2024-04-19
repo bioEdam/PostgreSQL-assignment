@@ -45,7 +45,7 @@ BEGIN
             FROM newest_loan
             JOIN artefacts ON artefacts.id = p_artefact_id
             WHERE artefacts.ownership = 'loaned'
-            AND (newest_loan.start_date > p_start_date
+            AND (newest_loan.expected_arrival_date > p_start_date
             OR newest_loan.end_date < p_end_date)
 
         ) THEN

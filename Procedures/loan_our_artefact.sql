@@ -1,5 +1,5 @@
 -- procedure for loaning artefacts to an institute
-CREATE OR REPLACE PROCEDURE loan_foreign_artefact(
+CREATE OR REPLACE PROCEDURE loan_our_artefact(
     p_artefact_id IN UUID, -- which artefact to loan
     p_institute_id IN UUID, -- to which institute
     p_expected_arrival_date IN TIMESTAMP WITH TIME ZONE,

@@ -23,7 +23,7 @@
 --     start_date DATE NOT NULL,
 --     end_date DATE,
 
-CREATE OR REPLACE PROCEDURE loan_artefact(
+CREATE OR REPLACE PROCEDURE loan_foreign_artefact(
     p_artefact_name VARCHAR(255),
     p_artefact_description TEXT,
     p_institute_id UUID,
