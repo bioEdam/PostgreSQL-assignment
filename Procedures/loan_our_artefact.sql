@@ -9,14 +9,14 @@ CREATE OR REPLACE PROCEDURE loan_our_artefact(
 AS $$
 
 BEGIN
-    -- check if the given artefact is our
+    -- check if the given artefact is our and the ID is valid
     IF NOT EXISTS(
         SELECT 1
         FROM artefacts
         WHERE id = p_institute_id
         AND ownership = 'our'
     ) THEN
-        RAISE EXCEPTION 'Artefact is not our';
+        RAISE EXCEPTION 'Artefact is not our or ID is invalid';
     END IF;
 
     INSERT INTO loans(artefact_id, institute_id, expected_arrival_date, start_date, end_date, loan_type)

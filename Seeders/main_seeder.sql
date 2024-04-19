@@ -97,3 +97,9 @@ BEGIN
         CALL update_current_exhibition(v_artefact_id);
     END LOOP;
 END $$;
+
+-- use of artefact_arrival function
+SELECT * FROM artefact_arrival((SELECT id FROM artefacts where name = ('First Folio')));
+
+-- do check_zone function for all artefacts
+SELECT check_zone(id) FROM artefacts;

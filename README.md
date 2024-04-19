@@ -16,14 +16,8 @@ FIIT STU
 - `loan_id` v tabulke `check` je nullable v pripade ze by sme chceli kontroli na vlastnych exemplaroch
 - v `institutes` rozdelenie `address` na viacero stlpcov
 
-# Qs
-- check toho ci mozeme premiestnit artefakt zalezi aj nejako na exhibiciach?
-- ako udrzovat zone_id a exhibit_id v artefacte?
-- Na Prevziate exemplaru z inej institucie bude stacit ako keby pridat arrival time a zmenit state artefaktu?
+## Popis Funkcií
 
-
-**TODO** check zone_id ci je v spravnom exhibite
-**TODO** Dopisat constrains
 
 ## Constraints
 - `artefacts`
