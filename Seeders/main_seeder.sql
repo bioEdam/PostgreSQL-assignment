@@ -67,7 +67,7 @@ DO $$
         -- use of loan_our_artefact function
         SELECT id INTO v_institute_id FROM institutes WHERE name = 'British Library';
         SELECT id INTO v_artefact_id FROM artefacts WHERE name = 'The Hound of the Baskervilles';
-        CALL loan_our_artefact(v_artefact_id, v_institute_id, '2023-01-01', '2025-12-31', '2026-12-31');
+        CALL loan_our_artefact(v_artefact_id, v_institute_id, '2026-1-15', '2025-12-31', '2026-12-31');
     END;
     $$;
 
@@ -102,6 +102,23 @@ BEGIN
     CALL create_exhibition('The Great Exhibition'::VARCHAR(255), '2023-05-01'::DATE, '2024-10-15'::DATE, 'This assignment is fun'::TEXT, v_artefact_ids, v_zone_ids);
 END $$;
 
+-- create exhibition in da future
+DO $$
+DECLARE
+    v_artefact_ids UUID[];
+    v_zone_ids UUID[];
+BEGIN
+    SELECT ARRAY_AGG(id) INTO v_artefact_ids
+    FROM artefacts
+    WHERE name IN ('Mona Lisa', 'David');
+
+    SELECT ARRAY_AGG(id) INTO v_zone_ids
+    FROM zones
+    WHERE name IN ('Back Rooms');
+
+    CALL create_exhibition('The Great Exhibition'::VARCHAR(255), '2027-03-01'::DATE, '2028-10-15'::DATE, 'This assignment is fun'::TEXT, v_artefact_ids, v_zone_ids);
+END $$;
+
 -- use function update_current_exhibition on all artefacts
 DO $$
 DECLARE
@@ -117,4 +134,8 @@ END $$;
 SELECT * FROM artefact_arrival((SELECT id FROM artefacts where name = ('First Folio')));
 
 -- do check_zone function for all artefacts
-SELECT check_zone(id) FROM artefacts;
+SELECT name, check_zone(id) FROM artefacts;
+
+-- do get_correct_artefacts_zones function for all artefacts
+SELECT artefacts.name, get_correct_artefacts_zones(artefacts.id), zones.name, check_zone(public.artefacts.id) FROM artefacts
+LEFT JOIN zones ON artefacts.zone_id = zones.id;

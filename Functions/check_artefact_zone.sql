@@ -40,7 +40,9 @@ BEGIN
         -- if the artefact is not part of an exhibition, then it cannot be at a zone that is part of an exhibition
         IF EXISTS (SELECT 1
                    FROM exhibition_zone
-                   WHERE zone_id = v_zone_id) THEN
+                   JOIN exhibitions ON exhibition_zone.exhibition_id = exhibitions.id
+                   WHERE zone_id = v_zone_id
+                   AND CURRENT_DATE BETWEEN start_date AND end_date) THEN
             RETURN FALSE;
         ELSE
             RETURN TRUE;

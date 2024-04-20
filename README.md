@@ -21,15 +21,17 @@ FIIT STU
       * [Parametre](#parametre)
     * ['check_artefact_zone'](#check_artefact_zone)
       * [Parametre](#parametre-1)
+    * ['get_correct_artefact_zone'](#get_correct_artefact_zone)
+      * [Parametre](#parametre-2)
   * [Procedures](#procedures)
     * ['update_current_exhibition'](#update_current_exhibition)
-      * [Parametre](#parametre-2)
-    * ['loan_foreign_artefact'](#loan_foreign_artefact)
       * [Parametre](#parametre-3)
-    * ['loan_our_artefact'](#loan_our_artefact)
+    * ['loan_foreign_artefact'](#loan_foreign_artefact)
       * [Parametre](#parametre-4)
-    * ['create_exhibition'](#create_exhibition)
+    * ['loan_our_artefact'](#loan_our_artefact)
       * [Parametre](#parametre-5)
+    * ['create_exhibition'](#create_exhibition)
+      * [Parametre](#parametre-6)
   * [Procesy](#procesy)
     * [Naplánovanie expozície (exhibície)](#naplánovanie-expozície-exhibície)
     * [Vkladanie nového exempláru (artefaktu)](#vkladanie-nového-exempláru-artefaktu)
@@ -87,7 +89,7 @@ Zabraňuje vytváraniu exhibícií, ktoré by obsahovali zóny, ktoré sú v zad
 Funkcia slúži pre zamestnancov a kurátorov na aktualizovanie stavu artefaktu na `in_storage` a pridanie `arrival_date`.
 
 #### Parametre
-- `artefact_id` - ID artefaktu, ktorý sa aktualizuje
+- `p_artefact_id` - ID artefaktu, ktorý sa aktualizuje
 
 ### 'check_artefact_zone'
 Funkcia slúži na kontrolu, či artefakt je v správnej zóne. Vracia TRUE, ak je artefakt v zóne, ktorá je súčasťou exhibície, ktorej je aj artefakt súčasťou.
@@ -95,7 +97,15 @@ Vo funkcii je použitá procedúra [update_current_exhibition](#update_current_e
 V prípade, že zóna nie je súčasťou exhibície a zóna tiež nie je súčasťou exhibície, vráti TRUE.
 
 #### Parametre
-- `artefact_id` - ID artefaktu, ktorý sa kontroluje
+- `p_artefact_id` - ID artefaktu, ktorý sa kontroluje
+
+### 'get_correct_artefact_zone'
+Funkcia slúži na získanie správnej zóny pre artefakt. Vracia pole názvov zón, ktoré sú súčasťou exhibície, ktorej je artefakt súčasťou.
+V prípade, že artefakt nie je súčasťou exhibície, vráti pole názvov zón, ktoré nie sú súčasťou inej exhibície.
+- poznamka: táto funkcia ma napadla o dosť neskôr ako 'check_artefact_zone' a je možné že by sa dali spojiť do jednej funkcie
+
+#### Parametre
+- `p_artefact_id` - ID artefaktu, ktorý sa kontroluje
 
 ## Procedures
 
@@ -104,7 +114,7 @@ V prípade, že zóna nie je súčasťou exhibície a zóna tiež nie je súčas
 Procedúra slúži na aktualizáciu `exhibition_id` v tabuľke `artefacts`.
 V prípade, že artefakt nie je súčasťou žiadnej exhibície, `exhibition_id` sa nastaví na NULL.
 #### Parametre
-- `artefact_id` - ID artefaktu, ktorý sa aktualizuje
+- `p_artefact_id` - ID artefaktu, ktorý sa aktualizuje
 
 ### 'loan_foreign_artefact'
 Slúži na vytvorenie nového artefaktu, ktorý sme si vypožičali od inej inštitúcie (inštitúcia musí byť v systéme).
@@ -165,11 +175,12 @@ VALUES
 ...`
 
 ### Presun exempláru (artefaktu) do inej zóny
-1. Presun artefaktu do inej zóny sa vykonáva pomocou `UPDATE` na `zone_id` v tabuľke `artefacts`
-2. Kontrola kapacity zóny sa vykonáva pomocou funkcie [check_zone_capacity](#check_zone_capacity)
-3. Po presunutí môžeme použiť funkciu [check_artefact_zone](#check_artefact_zone) na kontrolu, či sa artefakt nachádza v správnej zóne
-4. V prípade, že artefakt je súčasťou exhibície, sa kontroluje, či zóna patrí do exhibície
-5. V prípade, že artefakt nie je súčasťou exhibície, sa kontroluje, či zóna nepatrí do inej exhibície
+1. Pred presunom exmeplaru zemestnanec moze zavolat funkciu [get_correct_artefact_zone](#get_correct_artefact_zone) na zistenie spravnych zón
+2. Presun artefaktu do inej zóny sa vykonáva pomocou `UPDATE` na `zone_id` v tabuľke `artefacts`
+3. Kontrola kapacity zóny sa vykonáva pomocou funkcie [check_zone_capacity](#check_zone_capacity)
+4. Po presunutí môžeme použiť funkciu [check_artefact_zone](#check_artefact_zone) na kontrolu, či sa artefakt nachádza v správnej zóne
+5. V prípade, že artefakt je súčasťou exhibície, sa kontroluje, či zóna patrí do exhibície
+6. V prípade, že artefakt nie je súčasťou exhibície, sa kontroluje, či zóna nepatrí do inej exhibície
 
 ### Prevzatie exempláru (artefaktu) z inej inštitúcie
 1. Na prevzatie sa používa funkcia [loan_our_artefact](#loan_our_artefact). Na vypožičanie sa používa procedúra [loan_foreign_artefact](#loan_foreign_artefact)
