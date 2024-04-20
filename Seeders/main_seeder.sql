@@ -21,7 +21,8 @@ INSERT INTO artefacts (name, description, ownership, state)
 VALUES
 ('Mona Lisa', 'A portrait by Leonardo da Vinci', 'our', 'in_exhibition'),
 ('David', 'Sculpture by Michelangelo', 'our', 'in_storage'),
-('Hitchhikers Guide to the Galaxy', 'A great book by Douglas Adams', 'our', 'in_storage');
+('Hitchhikers Guide to the Galaxy', 'A great book by Douglas Adams', 'our', 'in_storage'),
+('The Hound of the Baskervilles', 'A classic Sherlock Holmes novel', 'our', 'in_storage');
 
 INSERT INTO zones (name, code, capacity)
 VALUES
@@ -33,7 +34,8 @@ INSERT INTO artefact_category (artefact_id, category_id)
 VALUES
 ((SELECT id FROM artefacts WHERE name = 'Mona Lisa'), (SELECT id FROM categories WHERE name = 'Painting')),
 ((SELECT id FROM artefacts WHERE name = 'David'), (SELECT id FROM categories WHERE name = 'Sculpture')),
-((SELECT id FROM artefacts WHERE name = 'Hitchhikers Guide to the Galaxy'), (SELECT id FROM categories WHERE name = 'Rare Books'));
+((SELECT id FROM artefacts WHERE name = 'Hitchhikers Guide to the Galaxy'), (SELECT id FROM categories WHERE name = 'Rare Books')),
+((SELECT id FROM artefacts WHERE name = 'The Hound of the Baskervilles'), (SELECT id FROM categories WHERE name = 'Rare Books'));
 
 INSERT INTO institutes (name, country, region, town, street_address, postal_code, institute_type)
 VALUES
@@ -54,7 +56,20 @@ DO $$
         SELECT id INTO v_institute_id FROM institutes WHERE name = 'British Library';
         CALL loan_foreign_artefact('First Folio', 'Collection of Shakespeare plays'::TEXT,
                                    v_institute_id, '2023-01-01 10:00:00', '2023-01-01', '2026-12-31');
-    END $$;
+    END
+$$;
+
+DO $$
+    DECLARE
+        v_institute_id UUID;
+        v_artefact_id UUID;
+    BEGIN
+        -- use of loan_our_artefact function
+        SELECT id INTO v_institute_id FROM institutes WHERE name = 'British Library';
+        SELECT id INTO v_artefact_id FROM artefacts WHERE name = 'The Hound of the Baskervilles';
+        CALL loan_our_artefact(v_artefact_id, v_institute_id, '2023-01-01', '2025-12-31', '2026-12-31');
+    END;
+    $$;
 
 -- set category for First Folio
 INSERT INTO artefact_category (artefact_id, category_id)

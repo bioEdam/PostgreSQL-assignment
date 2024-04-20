@@ -38,15 +38,20 @@ DECLARE
     v_artefact_id UUID;
     v_loan_id UUID;
 BEGIN
-    -- check if the artefact name is already exists
-    SELECT id INTO v_artefact_id
-    FROM artefacts
-    WHERE name = p_artefact_name;
-
-    -- check if institute exists
+     -- check if institute exists
     IF NOT EXISTS (SELECT 1 FROM institutes WHERE id = p_institute_id) THEN
         RAISE EXCEPTION 'Institute with id % does not exist', p_institute_id;
     END IF;
+
+    -- if the artefact name and institute id are the same,
+    -- then the artefact is already in the system
+    -- and is we can re-loan the same artefact
+    SELECT artefacts.id INTO v_artefact_id
+    FROM artefacts
+    JOIN loans ON artefacts.id = loans.artefact_id
+    WHERE name = p_artefact_name
+    AND ownership = 'loaned'
+    AND loans.institute_id = p_institute_id;
 
     -- create a new artefact
     IF v_artefact_id IS NULL THEN

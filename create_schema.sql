@@ -113,7 +113,7 @@ CREATE TABLE loans (
 -- checks for artefacts (specialy for artefacts that are loaned to someone)
 CREATE TABLE checks (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    loan_id UUID REFERENCES loans(id),  -- now nullable so that we can create checks for artefacts that are not loned
+    loan_id UUID REFERENCES loans(id),  -- now nullable so that we can create checks for artefacts that are not loaned
     artefact_id UUID REFERENCES artefacts(id) NOT NULL,
     results TEXT,
     duration INTERVAL,

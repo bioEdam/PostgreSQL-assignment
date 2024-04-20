@@ -1,8 +1,8 @@
 -- function made for editing artefact's exhibition_id for the curators
 
--- pick exhibitions that the artefact is in
--- and checks CURRENT TIME sets the exhibition_id in the artefact table to the exhibition_id
--- of the exhibition that is currently active
+-- pick exhibitions that the artefact is currently in (CURRENT TIME)
+-- and sets the exhibition_id in the artefact table to the exhibition_id
+-- if the artefact is not in any exhibition, the exhibition_id is set to null
 CREATE OR REPLACE PROCEDURE update_current_exhibition(p_artefact_id UUID)
 AS $$
 DECLARE

@@ -59,8 +59,8 @@ BEGIN
     END LOOP;
 
 
-    -- No need for COMMIT DataGrip will automatically commit the transaction
-    -- I HOPE THIS WONT BE A MASSIVE PAIN IN THE BUTT
+    -- No need for COMMIT DataGrip will automatically "wrap" the procedure in a transaction
+    -- I HOPE THIS WONT BITE ME IN THE BUTT
 EXCEPTION
     WHEN OTHERS THEN
         -- catch failed overlap and other checks
