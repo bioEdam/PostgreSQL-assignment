@@ -99,7 +99,7 @@ BEGIN
     FROM zones
     WHERE name IN ('Main Hall');
 
-    CALL create_exhibition('The Great Exhibition'::VARCHAR(255), '2023-05-01'::DATE, '2024-10-15'::DATE, 'This assignment is fun'::TEXT, v_artefact_ids, v_zone_ids);
+    CALL create_exhibition('The Great Exhibition'::VARCHAR(255), '2024-04-1'::DATE, '2024-10-15'::DATE, 'This assignment is fun'::TEXT, v_artefact_ids, v_zone_ids);
 END $$;
 
 -- create exhibition in da future
@@ -116,7 +116,7 @@ BEGIN
     FROM zones
     WHERE name IN ('Back Rooms');
 
-    CALL create_exhibition('The Great Exhibition'::VARCHAR(255), '2027-03-01'::DATE, '2028-10-15'::DATE, 'This assignment is fun'::TEXT, v_artefact_ids, v_zone_ids);
+    CALL create_exhibition('The Future Exhibition'::VARCHAR(255), '2027-03-01'::DATE, '2028-10-15'::DATE, 'Actually good stuff'::TEXT, v_artefact_ids, v_zone_ids);
 END $$;
 
 -- use function update_current_exhibition on all artefacts
@@ -134,8 +134,8 @@ END $$;
 SELECT * FROM artefact_arrival((SELECT id FROM artefacts where name = ('First Folio')));
 
 -- do check_zone function for all artefacts
-SELECT name, check_zone(id) FROM artefacts;
+SELECT name, check_artefact_zone(id) FROM artefacts;
 
 -- do get_correct_artefacts_zones function for all artefacts
-SELECT artefacts.name, get_correct_artefacts_zones(artefacts.id), zones.name, check_zone(public.artefacts.id) FROM artefacts
+SELECT artefacts.name, get_correct_artefacts_zones(artefacts.id), zones.name as curr_zones_name, check_artefact_zone(artefacts.id) FROM artefacts
 LEFT JOIN zones ON artefacts.zone_id = zones.id;

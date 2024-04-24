@@ -205,7 +205,7 @@ VALUES
   - pri vytváraní novej exhibície sa nekontroluje kapacita zón
   - v pripade zmeny udajov sa neuchovava historia
   - artefakty ktoré su evidované ako požicané 
-a este nie prevziaté nemôžu byť sučastou novej exhibicie pokial start_date exhibicie je vačší ako expected_arrival_date artefaktu
+a este nie prevziate nemôžu byť sučastou novej exhibicie pokial start_date exhibicie je vačší ako expected_arrival_date artefaktu
   
 - `checks`
   - kontroly sa nedajú vytvárať hromadne
