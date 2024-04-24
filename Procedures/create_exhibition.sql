@@ -13,45 +13,35 @@ DECLARE
     p_zone_id UUID;
 BEGIN
     -- Check if all loaned artefacts are available for the exhibition
-    FOREACH p_artefact_id IN ARRAY p_artefacts
-    LOOP
-        IF EXISTS (
-            -- check for only the newest loan of there are multiple loans
-            WITH newest_loan AS (
-                SELECT *
-                FROM loans
-                WHERE artefact_id = p_artefact_id
-                ORDER BY start_date DESC
-                LIMIT 1
-            )
-            SELECT 1
-            FROM newest_loan
-            JOIN artefacts ON artefacts.id = p_artefact_id
-            WHERE artefacts.ownership = 'loaned'
-              -- exhibition will begin before the artefact arrives (arrived) or the artefact needs to be returned before the exhibition ends
-            AND (COALESCE(newest_loan.arrival_date, newest_loan.expected_arrival_date) > p_start_date   -- use of expected_arrival_date if the artefact have not arrived yet
-            OR newest_loan.end_date < p_end_date)
-        ) THEN
-            RAISE EXCEPTION 'Loaned artefact is not available for the exhibition';
-        END IF;
-    END LOOP;
-
+        FOREACH p_artefact_id IN ARRAY p_artefacts
+        LOOP
+            -- do this only if the artefact is loaned
+            IF EXISTS (SELECT 1 FROM artefacts WHERE id = p_artefact_id AND ownership = 'loaned')
+             THEN
+                IF NOT EXISTS (
+                    -- check for only the newest loan of there are multiple loans
+                    SELECT 1
+                    FROM loans
+                    JOIN artefacts ON loans.artefact_id = artefacts.id
+                    WHERE artefacts.id = p_artefact_id
+                    -- check if the loaned artefact is available for the exhibition (contained by)
+                    AND tstzrange(COALESCE(loans.arrival_date, loans.expected_arrival_date), loans.end_date, '[]')
+                            <@
+                        tstzrange(p_start_date::TIMESTAMP WITH TIME ZONE, p_end_date::TIMESTAMP WITH TIME ZONE, '[]')
+                ) THEN
+                    RAISE EXCEPTION 'Loaned artefact is not available for the exhibition';
+                END IF;
+            END IF;
+        END LOOP;
     -- Check if all our artefacts are available for the exhibition
     FOREACH p_artefact_id IN ARRAY p_artefacts
     LOOP
         IF EXISTS (
-            WITH newest_loan AS (
-                SELECT *
-                FROM loans
-                WHERE artefact_id = p_artefact_id
-                ORDER BY start_date DESC
-                LIMIT 1
-            )
             SELECT 1
-            FROM newest_loan
-            JOIN artefacts ON artefacts.id = p_artefact_id
-            WHERE artefacts.ownership = 'our'
-            AND daterange(newest_loan.start_date, newest_loan.end_date, '[]') && daterange(p_start_date, p_end_date, '[]')
+            FROM loans
+            JOIN artefacts ON artefacts.id = loans.artefact_id
+            WHERE artefacts.ownership = 'our' AND artefacts.id = p_artefact_id
+            AND daterange(loans.start_date, loans.end_date, '[]') && daterange(p_start_date, p_end_date, '[]')
         ) THEN
             RAISE EXCEPTION 'Our artefact is loaned during the exhibition';
         END IF;

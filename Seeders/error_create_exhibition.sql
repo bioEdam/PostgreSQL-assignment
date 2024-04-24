@@ -68,9 +68,10 @@ BEGIN
     FROM zones
     WHERE name IN ('Main Hall');
 
-    CALL create_exhibition('Da Vinki?'::VARCHAR(255), '2026-06-01'::DATE, '2026-09-15'::DATE, 'This should give an error'::TEXT,
+    CALL create_exhibition('Da Vinki?'::VARCHAR(255), '2022-01-01'::DATE, '2026-09-15'::DATE, 'This should give an error'::TEXT,
                            v_artefact_ids, v_zone_ids);
 END $$;
+-- 2023-01-01,2026-12-31
 
 -- our artefact will be loaned
 DO $$
@@ -89,3 +90,5 @@ BEGIN
     CALL create_exhibition('Da Vinki?'::VARCHAR(255), '2026-06-01'::DATE, '2026-09-15'::DATE, 'This should give an error'::TEXT,
                            v_artefact_ids, v_zone_ids);
 END $$;
+-- House of Baskervilles loan dates
+-- 2025-12-31,2026-12-31
