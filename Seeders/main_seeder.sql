@@ -17,12 +17,12 @@ VALUES
 ('Sculpture', 'Various forms of sculptures'),
 ('Rare Books', 'Collectible and antique books');
 
-INSERT INTO artefacts (name, description, ownership, state)
+INSERT INTO artefacts (name, description, state)
 VALUES
-('Mona Lisa', 'A portrait by Leonardo da Vinci', 'our', 'in_exhibition'),
-('David', 'Sculpture by Michelangelo', 'our', 'in_storage'),
-('Hitchhikers Guide to the Galaxy', 'A great book by Douglas Adams', 'our', 'in_storage'),
-('The Hound of the Baskervilles', 'A classic Sherlock Holmes novel', 'our', 'in_storage');
+('Mona Lisa', 'A portrait by Leonardo da Vinci', 'in_exhibition'),
+('David', 'Sculpture by Michelangelo', 'in_storage'),
+('Hitchhikers Guide to the Galaxy', 'A great book by Douglas Adams', 'in_storage'),
+('The Hound of the Baskervilles', 'A classic Sherlock Holmes novel', 'in_storage');
 
 INSERT INTO zones (name, code, capacity)
 VALUES
