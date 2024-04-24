@@ -28,9 +28,9 @@ BEGIN
             FROM newest_loan
             JOIN artefacts ON artefacts.id = p_artefact_id
             WHERE artefacts.ownership = 'loaned'
+              -- exhibition will begin before the artefact arrives (arrived) or the artefact needs to be returned before the exhibition ends
             AND (COALESCE(newest_loan.arrival_date, newest_loan.expected_arrival_date) > p_start_date   -- use of expected_arrival_date if the artefact have not arrived yet
             OR newest_loan.end_date < p_end_date)
-
         ) THEN
             RAISE EXCEPTION 'Loaned artefact is not available for the exhibition';
         END IF;

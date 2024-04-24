@@ -62,13 +62,13 @@ DECLARE
 BEGIN
     SELECT ARRAY_AGG(id) INTO v_artefact_ids
     FROM artefacts
-    WHERE name IN ('First Folio', 'Mona Lisa');
+    WHERE name IN ('First Folio');
 
     SELECT ARRAY_AGG(id) INTO v_zone_ids
     FROM zones
     WHERE name IN ('Main Hall');
 
-    CALL create_exhibition('Da Vinki?'::VARCHAR(255), '2026-06-01'::DATE, '2027-09-15'::DATE, 'This should give an error'::TEXT,
+    CALL create_exhibition('Da Vinki?'::VARCHAR(255), '2026-06-01'::DATE, '2026-09-15'::DATE, 'This should give an error'::TEXT,
                            v_artefact_ids, v_zone_ids);
 END $$;
 
