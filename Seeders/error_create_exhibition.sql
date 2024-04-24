@@ -71,3 +71,21 @@ BEGIN
     CALL create_exhibition('Da Vinki?'::VARCHAR(255), '2026-06-01'::DATE, '2027-09-15'::DATE, 'This should give an error'::TEXT,
                            v_artefact_ids, v_zone_ids);
 END $$;
+
+-- our artefact will be loaned
+DO $$
+DECLARE
+    v_artefact_ids UUID[];
+    v_zone_ids UUID[];
+BEGIN
+    SELECT ARRAY_AGG(id) INTO v_artefact_ids
+    FROM artefacts
+    WHERE name IN ('The Hound of the Baskervilles');
+
+    SELECT ARRAY_AGG(id) INTO v_zone_ids
+    FROM zones
+    WHERE name IN ('Main Hall');
+
+    CALL create_exhibition('Da Vinki?'::VARCHAR(255), '2026-06-01'::DATE, '2026-09-15'::DATE, 'This should give an error'::TEXT,
+                           v_artefact_ids, v_zone_ids);
+END $$;

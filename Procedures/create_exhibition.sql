@@ -36,6 +36,27 @@ BEGIN
         END IF;
     END LOOP;
 
+    -- Check if all our artefacts are available for the exhibition
+    FOREACH p_artefact_id IN ARRAY p_artefacts
+    LOOP
+        IF EXISTS (
+            WITH newest_loan AS (
+                SELECT *
+                FROM loans
+                WHERE artefact_id = p_artefact_id
+                ORDER BY start_date DESC
+                LIMIT 1
+            )
+            SELECT 1
+            FROM newest_loan
+            JOIN artefacts ON artefacts.id = p_artefact_id
+            WHERE artefacts.ownership = 'our'
+            AND daterange(newest_loan.start_date, newest_loan.end_date, '[]') && daterange(p_start_date, p_end_date, '[]')
+        ) THEN
+            RAISE EXCEPTION 'Our artefact is loaned during the exhibition';
+        END IF;
+        END LOOP;
+
     -- Create the new exhibition
     INSERT INTO exhibitions (title, start_date, end_date, description)
     VALUES (p_exhibition_title, p_start_date, p_end_date, p_description)
