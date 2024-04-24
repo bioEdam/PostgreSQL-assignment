@@ -37,7 +37,7 @@ FIIT STU
     * [Vkladanie nového exempláru (artefaktu)](#vkladanie-nového-exempláru-artefaktu)
     * [Presun exempláru (artefaktu) do inej zóny](#presun-exempláru-artefaktu-do-inej-zóny)
     * [Prevzatie exempláru (artefaktu) z inej inštitúcie](#prevzatie-exempláru-artefaktu-z-inej-inštitúcie)
-  * [Zapožičanie exempláru (artefaktu) z inej inštitúcie](#zapožičanie-exempláru-artefaktu-z-inej-inštitúcie)
+    * [Zapožičanie exempláru (artefaktu) z inej inštitúcie](#zapožičanie-exempláru-artefaktu-z-inej-inštitúcie)
   * [Ohraničenia](#ohraničenia)
 <!-- TOC -->
 
@@ -68,13 +68,13 @@ FIIT STU
 Zabraňuje vytváraniu exhibícií, ktoré by obsahovali artefakty, ktoré sú v zadanom časovom úseku inej exhibície.
 
 ### 'check_zone_capacity'
-Kontroluje kapacitu zóny pri update `exhibition_id` v artefaktoch. Kontrola prebieha spočítaním výskytov danej ID v artefaktoch a porovnaním s kapacitou zóny.
+Kontroluje kapacitu zóny pri update `zone_id` v artefaktoch. Kontrola prebieha spočítaním výskytov danej ID v artefaktoch a porovnaním s kapacitou zóny.
 
 ### 'correct_date_order'
 Kontroluje pridávanie dátumov do `exhibitions` a `loans` tabuliek. Kontroluje, či dátumy sú v správnom poradí (start < end).
 
 ### 'log_artefact_changes'
-Loguje zmeny v artefaktoch. Pri zmene exhibition_id, zone_id, stavu alebo vlastníctva sa vytvorí nový riadok v tabuľke `artefact_changes`, ktorý odkazuje na aktuálny stav artefaktu.
+Loguje zmeny v artefaktoch. Pri zmene exhibition_id, zone_id, stavu alebo vlastníctva sa vytvorí nový riadok v tabuľke `artefact_history`, ktorý odkazuje na aktuálny stav artefaktu pomocou `artefact_id`.
 
 ### 'update_updated_at'
 Tato komicky nazvaná funkcia slúži na aktualizáciu `updated_at` v každej tabuľke ktorá má `updated_at` (pri niektorých tabulkách ako hsitórií mi `updated_at` nedávalo význam). Pri zmene akehokolvek stľpca sa aktualizuje `updated_at`.
@@ -94,13 +94,13 @@ Funkcia slúži pre zamestnancov a kurátorov na aktualizovanie stavu artefaktu 
 ### 'check_artefact_zone'
 Funkcia slúži na kontrolu, či artefakt je v správnej zóne. Vracia TRUE, ak je artefakt v zóne, ktorá je súčasťou exhibície, ktorej je aj artefakt súčasťou.
 Vo funkcii je použitá procedúra [update_current_exhibition](#update_current_exhibition). 
-V prípade, že zóna nie je súčasťou exhibície a zóna tiež nie je súčasťou exhibície, vráti TRUE.
+V prípade, že artefakt aktuálne nie je súčasťou exhibície a zóna tiež aktuálne nie je súčasťou nejakej exhibície, vráti TRUE.
 
 #### Parametre
 - `p_artefact_id` - ID artefaktu, ktorý sa kontroluje
 
 ### 'get_correct_artefact_zone'
-Funkcia slúži na získanie správnej zóny pre artefakt. Vracia pole názvov zón, ktoré sú súčasťou exhibície, ktorej je artefakt súčasťou.
+Funkcia slúži na získanie správnych zón pre artefakt. Vracia pole názvov zón, ktoré sú súčasťou exhibície, ktorej je aj artefakt súčasťou.
 V prípade, že artefakt nie je súčasťou exhibície, vráti pole názvov zón, ktoré nie sú súčasťou inej exhibície.
 - poznamka: táto funkcia ma napadla o dosť neskôr ako 'check_artefact_zone' a je možné že by sa dali spojiť do jednej funkcie
 
@@ -112,7 +112,8 @@ V prípade, že artefakt nie je súčasťou exhibície, vráti pole názvov zón
 ### 'update_current_exhibition'
 
 Procedúra slúži na aktualizáciu `exhibition_id` v tabuľke `artefacts`.
-V prípade, že artefakt nie je súčasťou žiadnej exhibície, `exhibition_id` sa nastaví na NULL.
+V prípade, že artefakt nie je súčasťou žiadnej exhibície, `exhibition_id` sa nastaví na NULL. 
+(uvedomujem si že toto by mohla byť skôr funkcia)
 #### Parametre
 - `p_artefact_id` - ID artefaktu, ktorý sa aktualizuje
 
@@ -158,7 +159,7 @@ exhibícia, ktorá by obsahovala artefakty alebo zóny, ktoré sú súčasťou i
 
 ### Naplánovanie expozície (exhibície)
 1. Zistenie ID artefaktov, ktoré chceme vystaviť
-2. Zistenie ID zón, ktoré chceme vystaviť
+2. Zistenie ID zón, ktoré chceme priradiť pre exhibíciu
 3. Zavolanie procedúry `create_exhibition` s ID artefaktov a zón a informáciami o exhibícii
 4. V procedúre sa skontroluje, či požičané artefakty budú prístupné v čase exhibície
    1. Pokiaľ `arrival_date` artefaktu je NULL (neprišiel) kontrolujeme s `expected_arrival_date`
@@ -179,15 +180,15 @@ VALUES
 2. Presun artefaktu do inej zóny sa vykonáva pomocou `UPDATE` na `zone_id` v tabuľke `artefacts`
 3. Kontrola kapacity zóny sa vykonáva pomocou funkcie [check_zone_capacity](#check_zone_capacity)
 4. Po presunutí môžeme použiť funkciu [check_artefact_zone](#check_artefact_zone) na kontrolu, či sa artefakt nachádza v správnej zóne
-5. V prípade, že artefakt je súčasťou exhibície, sa kontroluje, či zóna patrí do exhibície
-6. V prípade, že artefakt nie je súčasťou exhibície, sa kontroluje, či zóna nepatrí do inej exhibície
+5. V prípade, že artefakt je aktuálne súčasťou exhibície, sa kontroluje, či zóna patrí do exhibície
+6. V prípade, že artefakt nie je súčasťou exhibície, sa kontroluje, či zóna nepatrí do inej aktuálne exhibície
 
 ### Prevzatie exempláru (artefaktu) z inej inštitúcie
 1. Na prevzatie sa používa funkcia [loan_our_artefact](#loan_our_artefact). Na vypožičanie sa používa procedúra [loan_foreign_artefact](#loan_foreign_artefact)
 2. V prípade, že artefakt je vypožičaný z inej inštitúcie (loan_type = 'loan_in'), je možné ho prevziať s funkciou [artefact_arrival](#artefact_arrival)
 3. Funkcia nastaví stav artefaktu na 'in_storage' a pridá `arrival_date` na aktuálny dátum.
 
-## Zapožičanie exempláru (artefaktu) z inej inštitúcie
+### Zapožičanie exempláru (artefaktu) z inej inštitúcie
 1. Na vypožičanie sa používa procedúra [loan_foreign_artefact](#loan_foreign_artefact)
 2. Táto procedúra vytvorí nový artefakt s ownership = 'loaned' a state = 'in_transit'
    1. V prípade, že artefakt v minulosti už bol vypožičaný, sa vytvorí sa len nový riadok v tabuľke `loans` s `loan_type` = 'loan_out' a artefact_id = 'už existujúci artefakt'
