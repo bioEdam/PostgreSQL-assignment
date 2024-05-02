@@ -12,6 +12,12 @@ DECLARE
     p_artefact_id UUID;
     p_zone_id UUID;
 BEGIN
+    -- Check if the start date is before the end date
+    IF p_start_date >= p_end_date THEN
+        RAISE EXCEPTION 'Start date must be before the end date';
+    END IF;
+
+
     -- Check if all loaned artefacts are available for the exhibition
         FOREACH p_artefact_id IN ARRAY p_artefacts
         LOOP
